@@ -36,7 +36,7 @@ public class DoSearch extends HttpServlet {
          out.println("<html><head>");
          out.println("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
          out.println("<link href='styles/stylecs.css' rel='stylesheet' type='text/css' />");
-         out.println("<title>Echo Servlet</title></head>");
+         out.println("<title>Search Engine ics.uci.edu</title></head>");
          out.println("<body>");
  
          // Retrieve the value of the query parameter "username" (from text field)
