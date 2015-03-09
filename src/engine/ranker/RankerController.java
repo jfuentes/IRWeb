@@ -17,9 +17,10 @@ public class RankerController {
 
 			System.out.println();
 			System.out.println("Menu:");
-			System.out.println("1.- Start computing pageRank");
+			System.out.println("1.- Compute pageRank");
 			System.out.println("2.- Show higest pageranks");
-			System.out.println("3.- Exit");
+			System.out.println("3.- Reset all pagerank");
+			System.out.println("4.- Exit");
 			System.out.print("Option: ");
 			option = sc.nextInt();
 			switch (option) {
@@ -30,11 +31,12 @@ public class RankerController {
 				PageRank.printHighestPageRanks(10);
 				break;
 			case 3:
-				System.exit(0);
+				PageRank.resetPageRanks();
+				break;
 			default:
 				System.out.println("Invalid option");
 			}
-		} while (option != 3);
+		} while (option != 4);
 		LinksDB.close();
 		sc.close();
 

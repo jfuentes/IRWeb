@@ -1,46 +1,63 @@
 package engine.persistence;
 
+import java.util.ArrayList;
+
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 
 @Entity
-public class Link {
+public class Link{
 	
 	@PrimaryKey
-	private String link;
+	private String url;
 	
-	private String [] outgoingLinks; // for URLs and the second array is for their Anchor Texts
-	private String [] anchorTexts;
+	private ArrayList<String> ingoingLinks; // for URLs and the second array is for their Anchor Texts
+	private ArrayList<String> anchorTexts;
 	private int numberOutgoingLinks;
 	private double currentPageRank; //The value of current pageRank is stored in this field (temporal and final values)
 	
+	public Link(){
+		
+	}
+	
 	public Link(String link, int numberOutgoingLinks){
-		this.link = link;
+		this.url = link;
 		this.numberOutgoingLinks = numberOutgoingLinks;
-		outgoingLinks = new String[numberOutgoingLinks]; 
-		anchorTexts = new String[numberOutgoingLinks];
+		ingoingLinks = new ArrayList<String>(); 
+		anchorTexts = new ArrayList<String>();
 		currentPageRank=1; //initiate page rank is sets as 1
 	}
 	
-	public boolean putOutgoigLink(String li, String anchor, int position){
-		if(position<numberOutgoingLinks){
-			outgoingLinks[position]=li;
-			anchorTexts[position]=anchor;
-			return true;
-		}else
-			return false;
+	public Link(String link){
+		this.url = link;
+		ingoingLinks = new ArrayList<String>(); 
+		anchorTexts = new ArrayList<String>();
+		currentPageRank=1; //initiate page rank is sets as 1
 	}
 	
-	public String getLink(){
-		return link;
+	public void addIngoingLink(String li, String anchor){
+		ingoingLinks.add(li);
+		anchorTexts.add(anchor);
 	}
 	
-	public String getOutgoingLink(int position){
-		return outgoingLinks[position];
+	public String getURL(){
+		return url;
+	}
+	
+	public ArrayList<String> getIngoingLinks(){
+		return ingoingLinks;
+	}
+	
+	public String getIngoingLink(int position){
+		return ingoingLinks.get(position);
 	}
 	
 	public String getAnchorText(int position){
-		return anchorTexts[position];
+		return anchorTexts.get(position);
+	}
+	
+	public void setNumberOutgoingLinks(int num){
+		numberOutgoingLinks=num;
 	}
 	
 	public int getNumberOutgoingLinks(){
@@ -59,6 +76,17 @@ public class Link {
 	 */
 	public void setCurrentPageRank(double currentPageRank) {
 		this.currentPageRank = currentPageRank;
+	}
+
+
+	public int compareTo(Object l2) {
+		// TODO Auto-generated method stub
+			if(currentPageRank>((Link) l2).getCurrentPageRank())
+			return 1;
+		else if(currentPageRank<((Link) l2).getCurrentPageRank())
+			return -1;
+		else 
+			return 0;
 	}
 
 }

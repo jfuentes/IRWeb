@@ -1,5 +1,9 @@
 package engine.ranker;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import com.sleepycat.persist.EntityCursor;
 
 import engine.persistence.Link;
@@ -28,8 +32,9 @@ public class PageRank {
 				
 				totalOutgoingLinks = 0;
 				//for each outgoing link from current link. Sum all of them
-				for(int i=0; i<link.getNumberOutgoingLinks(); i++){
-					Link l = linksDB.getLink(link.getOutgoingLink(i));
+				ArrayList<String> ingoingLinks=link.getIngoingLinks();
+				for(int i=0; i<ingoingLinks.size(); i++){
+					Link l = linksDB.getLink(ingoingLinks.get(i));
 					totalOutgoingLinks+= l.getCurrentPageRank()/l.getNumberOutgoingLinks();
 				}
 				//final pagerank for link
@@ -46,9 +51,37 @@ public class PageRank {
 		
 	}
 
-	public static void printHighestPageRanks(int i) {
+	public static void printHighestPageRanks(int top) {
 		// TODO Auto-generated method stub
+		LinksDB linksDB = LinksDB.getInstance();
+		EntityCursor<Link> links = linksDB.getCursorLinks();
+		ArrayList<Link> arrayList = new ArrayList<Link>();
+		for(Link link = links.first(); link!=null; link=links.next()){
+			arrayList.add(link);
+		}
 		
+		Collections.sort(arrayList, new Comparator<Link>(){
+			public int compare(Link l1, Link l2){
+				return l1.compareTo(l2);
+			}
+		});
+		
+		System.out.println("Pagerank websites Top "+top);
+		for(int i=0; i<top; i++){
+			System.out.println((i+1)+") "+arrayList.get(i).getURL()+":  "+arrayList.get(i).getCurrentPageRank());
+		}
+	}
+
+	/*
+	 * Method to reset all pageranks to 1 (default value)
+	 */
+	public static void resetPageRanks() {
+		// TODO Auto-generated method stub
+		LinksDB linksDB = LinksDB.getInstance();
+		EntityCursor<Link> links = linksDB.getCursorLinks();
+		for(Link link = links.first(); link!=null; link=links.next()){
+			link.setCurrentPageRank(1);
+		}
 	}
 
 }

@@ -64,14 +64,25 @@ public class Crawler extends WebCrawler{
 					page.getWebURL().getParentDocid(), page.getWebURL().getParentUrl(), page.getWebURL().getDomain(), 
 					page.getWebURL().getSubDomain(), page.getWebURL().getPath(), page.getWebURL().getAnchor()));
 			
-			//make index for link (useful for pagerank)
-			Link link= new Link(url, links.size());
-			int i=0;
+			//make index for links (useful for pagerank)
+			Link li=null;
 			for(WebURL web: links){
-				link.putOutgoigLink(web.getURL(), web.getAnchor(), i++);
+				if((li=linksDB.getLink(web.getURL()))!=null){
+					li.addIngoingLink(url, web.getAnchor());
+				}else{
+					Link link= new Link(web.getURL());
+					linksDB.putLink(link);
+				}
 			}
 			
-			linksDB.putLink(link);
+			li = linksDB.getLink(url);
+			if(li!=null)
+				li.setNumberOutgoingLinks(links.size());
+			
+			
+			linksDB.syncStore();
+			
+			
 			
 		}
 		visitedWebpages++;

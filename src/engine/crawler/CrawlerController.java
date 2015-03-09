@@ -34,8 +34,6 @@ public class CrawlerController {
 			case 2:
 				showStatistics();
 				break;
-			case 3:
-				System.exit(0);
 			default:
 				System.out.println("Invalid option");
 			}

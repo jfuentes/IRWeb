@@ -34,8 +34,6 @@ public class SearchEngineController {
 			case 3:
 				excecuteQuery(sc);
 				break;
-			case 4:
-				System.exit(0);
 			default:
 				System.out.println("Invalid option");
 			}
