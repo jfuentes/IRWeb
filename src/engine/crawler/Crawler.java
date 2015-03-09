@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import engine.persistence.BerkeleyDB;
+import engine.persistence.Link;
+import engine.persistence.LinksDB;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -12,6 +14,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class Crawler extends WebCrawler{
 	private BerkeleyDB db=BerkeleyDB.getInstance();
+	private LinksDB linksDB=LinksDB.getInstance();
 	private long visitedWebpages=0;
 
 	private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|csv|js|bmp|gif|jpe?g|cnf" 
@@ -60,6 +63,16 @@ public class Crawler extends WebCrawler{
 			db.putWebpage(new WebURLExtension(page.getWebURL().getURL(), text, page.getWebURL().getDocid(), 
 					page.getWebURL().getParentDocid(), page.getWebURL().getParentUrl(), page.getWebURL().getDomain(), 
 					page.getWebURL().getSubDomain(), page.getWebURL().getPath(), page.getWebURL().getAnchor()));
+			
+			//make index for link (useful for pagerank)
+			Link link= new Link(url, links.size());
+			int i=0;
+			for(WebURL web: links){
+				link.putOutgoigLink(web.getURL(), web.getAnchor(), i++);
+			}
+			
+			linksDB.putLink(link);
+			
 		}
 		visitedWebpages++;
 		

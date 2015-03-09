@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import engine.utils.Pair;
 import engine.persistence.BerkeleyDB;
+import engine.persistence.LinksDB;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -40,6 +41,7 @@ public class CrawlerController {
 			}
 		} while (option != 3);
 		BerkeleyDB.close();
+		LinksDB.close();
 		sc.close();
 	}
 
