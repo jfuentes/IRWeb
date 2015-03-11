@@ -24,10 +24,10 @@ public class NDCG {
 			googleResults = GoogleSearch.computeSearch(query);
 
 			// to store the final NDCG values <URL, NDCG value>
-			ArrayList<Pair<String, Double>> NDCGResult = new ArrayList<Pair<String, Double>>(NDCG_NUMBER);
+			ArrayList<Pair<String, Double>> NDCGResult = new ArrayList<Pair<String, Double>>();
 			
 			// to store Google DCG values <URL, DCG value>
-			ArrayList<Pair<String[], Double>> GoogleDCG = new ArrayList<Pair<String[], Double>>(NDCG_NUMBER);
+			ArrayList<Pair<String[], Double>> GoogleDCG = new ArrayList<Pair<String[], Double>>();
 
 			// for each one of the results from our search engine
 			for (int i = 0; i < googleResults.size() && i < results.size() && i < NDCG_NUMBER; i++) {
@@ -44,12 +44,11 @@ public class NDCG {
 					}
 				}
 				// store each par <URL, relevance value>
-				NDCGResult.set(i,
-						Pair.createPair(results.get(i).first, relevance));
+				NDCGResult.add(Pair.createPair(results.get(i).first, relevance));
 				String [] description = new String[2];
 				description[0]=googleResults.get(i).first;
 				description[1]=googleResults.get(i).second;
-				GoogleDCG.set(i, Pair.createPair(description, (double) NDCG_NUMBER-i));
+				GoogleDCG.add(Pair.createPair(description, (double) NDCG_NUMBER-i));
 
 			}
 
@@ -65,7 +64,7 @@ public class NDCG {
 						Pair.createPair(
 								NDCGResult.get(i).first,
 								NDCGResult.get(i - 1).second
-										+ NDCGResult.get(i).second/ Math.log(i)));
+										+ NDCGResult.get(i).second/(Math.log10(i+1)/Math.log10(2))));
 				
 				
 				//google
@@ -74,17 +73,18 @@ public class NDCG {
 						Pair.createPair(
 								GoogleDCG.get(i).first,
 								GoogleDCG.get(i - 1).second
-										+ GoogleDCG.get(i).second/ Math.log(i)));
+										+ GoogleDCG.get(i).second/(Math.log10(i+1)/Math.log10(2))));
 
 			}
 			
 			//final operation (division) to get NCDG
 			for (int i = 0; i < NDCG_NUMBER; i++) {
+				System.out.println(NDCGResult.get(i).second);
 				NDCGResult.set(
 						i,
 						Pair.createPair(
 								NDCGResult.get(i).first,
-								NDCGResult.get(i - 1).second / GoogleDCG.get(i).second));
+								NDCGResult.get(i).second / GoogleDCG.get(i).second));
 			}
 
 			finalResult = Pair.createPair(NDCGResult, GoogleDCG);
@@ -150,7 +150,7 @@ public class NDCG {
 						Pair.createPair(
 								NDCGResult.get(i).first,
 								NDCGResult.get(i - 1).second
-										+ NDCGResult.get(i).second/(i==1?1:Math.log(i))));
+										+ NDCGResult.get(i).second/(Math.log10(i+1)/Math.log10(2))));
 				
 				
 				//google
@@ -159,12 +159,13 @@ public class NDCG {
 						Pair.createPair(
 								GoogleDCG.get(i).first,
 								GoogleDCG.get(i - 1).second
-										+ GoogleDCG.get(i).second/ (i==1?1:Math.log(i))));
+										+ GoogleDCG.get(i).second/(Math.log10(i+1)/Math.log10(2))));
 
 			}
 			
 			//final operation (division) to get NCDG
 			for (int i = 0; i < NDCG_NUMBER; i++) {
+				
 				NDCGResult.set(
 						i,
 						Pair.createPair(

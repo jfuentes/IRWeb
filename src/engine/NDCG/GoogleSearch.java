@@ -38,6 +38,8 @@ public class GoogleSearch {
 	public static ArrayList<Pair<String, String>> computeSearch(String query) throws IOException {
 		
 		ArrayList<Pair<String, String>> resultsList = new ArrayList<Pair<String, String>>();
+		
+		query+=" \"site:ics.uci.edu \"";
 		for (int i = 0; i < NUMBER_RESULTS; i = i + 4) {
 			String address = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&start="+i+"&q=";
 		 
