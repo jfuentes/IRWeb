@@ -10,8 +10,15 @@ import engine.persistence.Link;
 import engine.persistence.LinksDB;
 
 public class PageRank {
-	
-	public final static int NUMBER_ITERATIONS = 5;
+	/*
+	 * Regarding the number of iterations: 
+	 * "We see that we get a good approximation of the real PageRank values after 
+	 * only a few iterations. According to publications of Lawrence Page 
+	 * and Sergey Brin, about 100 iterations are necessary to get a good approximation 
+	 * of the PageRank values of the whole web"
+	 * Cited from http://pr.efactory.de/e-pagerank-algorithm.shtml
+	 */
+	public final static int NUMBER_ITERATIONS = 100; 
 	public final static double DAMPING_FACTOR = 0.85;
 	
 	/*
@@ -23,24 +30,27 @@ public class PageRank {
 		//Get an iterator from the index of links
 		LinksDB linksDB = LinksDB.getInstance();
 		
-		double totalOutgoingLinks = 0;
+		double totalIngoingLinks = 0;
 		double factor = (1-DAMPING_FACTOR);
 		for(int iteration=0; iteration<NUMBER_ITERATIONS; iteration++){
 			//for each website
 			EntityCursor<Link> links = linksDB.getCursorLinks();
 			for(Link link = links.first(); link!=null; link=links.next()){
 				
-				totalOutgoingLinks = 0;
+				totalIngoingLinks = 0;
 				//for each outgoing link from current link. Sum all of them
 				ArrayList<String> ingoingLinks=link.getIngoingLinks();
 				for(int i=0; i<ingoingLinks.size(); i++){
 					Link l = linksDB.getLink(ingoingLinks.get(i));
-					totalOutgoingLinks+= l.getCurrentPageRank()/l.getNumberOutgoingLinks();
+					totalIngoingLinks+= l.getCurrentPageRank()/l.getNumberOutgoingLinks();
+					System.out.println("ingoinglink "+link.getURL()+"<---"+ingoingLinks.get(i)+ "  "+totalIngoingLinks);
 				}
-				//final pagerank for link
-				double pageRank = factor + DAMPING_FACTOR*totalOutgoingLinks;
+				//final pagerank for the link
+				double pageRank = factor + DAMPING_FACTOR*totalIngoingLinks;
+				System.out.println("PageRank for "+link.getURL()+" "+pageRank);
 				link.setCurrentPageRank(pageRank);
-				
+				linksDB.putLink(link);
+				//linksDB.syncStore();
 			}
 		
 		}

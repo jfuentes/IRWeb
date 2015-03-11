@@ -74,8 +74,8 @@ public class Link{
 	/**
 	 * @param currentPageRank the currentPageRank to set
 	 */
-	public void setCurrentPageRank(double currentPageRank) {
-		this.currentPageRank = currentPageRank;
+	public void setCurrentPageRank(double cPageRank) {
+		this.currentPageRank = cPageRank;
 	}
 
 
