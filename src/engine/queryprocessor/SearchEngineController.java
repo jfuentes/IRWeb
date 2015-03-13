@@ -34,6 +34,8 @@ public class SearchEngineController {
 			case 3:
 				excecuteQuery(sc);
 				break;
+			case 4:
+				break;
 			default:
 				System.out.println("Invalid option");
 			}
@@ -92,25 +94,21 @@ public class SearchEngineController {
 	}
 	
 	public static ArrayList<Pair<String, Double[]>>  excecuteQuery(String sc) {
-		// TODO Auto-generated method stub
-		System.out.println("***********************************");
-		System.out.println("****      Query     ****");
-		System.out.println("***********************************");
-		System.out.println();
 
 		
 		InvertedIndexDB index=InvertedIndexDB.getInstance();
 		
-/*		TermInvertedIndex term = index.getTerm(word);
 		
-		long corpus = index.getTotalTerms();
+		QueryProcessor qp = new QueryProcessor(sc, index);
+		return qp.doSearchAndReturn();
+
+	}
+	
+	public static ArrayList<Pair<String, Double[]>>  excecuteQueryWithNDCG(String sc) {
+
 		
+		InvertedIndexDB index=InvertedIndexDB.getInstance();
 		
-		if(term!=null)
-			System.out.println(term.toStringWithTfidf(corpus));
-		else
-			System.out.println("There are no documents with that query");
-*/
 		
 		QueryProcessor qp = new QueryProcessor(sc, index);
 		return qp.doSearchAndReturn();

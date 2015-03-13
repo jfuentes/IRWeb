@@ -17,11 +17,9 @@ public class WebURLExtension {
 	
 	//from webURL class
 	private int docid;
-	private int parentDocid;
-	private String parentUrl;
+	private String title;
 	private String domain;
 	private String subDomain;
-	private String path;
 	private String anchor;
 	
 	
@@ -29,15 +27,13 @@ public class WebURLExtension {
 		
 	}
 	
-	public WebURLExtension(String url, String textContent, int docid, int parentDocid, String parentUrl, String domain, String subDomain, String path, String anchor){
+	public WebURLExtension(String url, String textContent, int docid, String title, String domain, String subDomain, String path, String anchor){
 		this.url=url;
 		this.textContent=textContent;
 		this.docid=docid;
-		this.parentDocid=parentDocid;
-		this.parentUrl=parentUrl;
+		this.title=title;
 		this.domain=domain;
 		this.subDomain=subDomain;
-		this.path=path;
 		this.anchor=anchor;
 	}
 	
@@ -60,31 +56,17 @@ public class WebURLExtension {
 	}
 
 	/**
-	 * @return the parentDocid
-	 */
-	public int getParentDocid() {
-		return parentDocid;
-	}
-
-	/**
-	 * @param parentDocid the parentDocid to set
-	 */
-	public void setParentDocid(int parentDocid) {
-		this.parentDocid = parentDocid;
-	}
-
-	/**
 	 * @return the parentUrl
 	 */
-	public String getParentUrl() {
-		return parentUrl;
+	public String getTitle() {
+		return title;
 	}
 
 	/**
 	 * @param parentUrl the parentUrl to set
 	 */
-	public void setParentUrl(String parentUrl) {
-		this.parentUrl = parentUrl;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	/**
@@ -113,20 +95,6 @@ public class WebURLExtension {
 	 */
 	public void setSubDomain(String subDomain) {
 		this.subDomain = subDomain;
-	}
-
-	/**
-	 * @return the path
-	 */
-	public String getPath() {
-		return path;
-	}
-
-	/**
-	 * @param path the path to set
-	 */
-	public void setPath(String path) {
-		this.path = path;
 	}
 
 	/**

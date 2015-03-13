@@ -43,16 +43,16 @@ public class PageRank {
 				for(int i=0; i<ingoingLinks.size(); i++){
 					Link l = linksDB.getLink(ingoingLinks.get(i));
 					totalIngoingLinks+= l.getCurrentPageRank()/l.getNumberOutgoingLinks();
-					System.out.println("ingoinglink "+link.getURL()+"<---"+ingoingLinks.get(i)+ "  "+totalIngoingLinks);
+					//System.out.println("ingoinglink "+link.getURL()+"<---"+ingoingLinks.get(i)+ "  "+totalIngoingLinks);
 				}
 				//final pagerank for the link
 				double pageRank = factor + DAMPING_FACTOR*totalIngoingLinks;
-				System.out.println("PageRank for "+link.getURL()+" "+pageRank);
+				//System.out.println("PageRank for "+link.getURL()+" "+pageRank);
 				link.setCurrentPageRank(pageRank);
 				linksDB.putLink(link);
 				//linksDB.syncStore();
 			}
-		
+			System.out.println("Iteration "+iteration+" done...");
 		}
 		
 		//Reflect changes in database
@@ -77,7 +77,7 @@ public class PageRank {
 		});
 		
 		System.out.println("Pagerank websites Top "+top);
-		for(int i=0; i<top; i++){
+		for(int i=arrayList.size()-1; i>=arrayList.size()-top; i--){
 			System.out.println((i+1)+") "+arrayList.get(i).getURL()+":  "+arrayList.get(i).getCurrentPageRank());
 		}
 	}

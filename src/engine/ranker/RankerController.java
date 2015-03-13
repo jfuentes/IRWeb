@@ -17,7 +17,7 @@ public class RankerController {
 
 			System.out.println();
 			System.out.println("Menu:");
-			System.out.println("1.- Compute pageRank");
+			System.out.println("1.- Compute pageRank (may take a long time)");
 			System.out.println("2.- Show higest pageranks");
 			System.out.println("3.- Reset all pagerank");
 			System.out.println("4.- Exit");
@@ -32,6 +32,8 @@ public class RankerController {
 				break;
 			case 3:
 				PageRank.resetPageRanks();
+				break;
+			case 4:
 				break;
 			default:
 				System.out.println("Invalid option");

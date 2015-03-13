@@ -34,13 +34,14 @@ public class NDCG {
 				// check if it is on Google results
 				double relevance = 0;
 				for (int g = 0; g < googleResults.size(); g++) {
-					if (results.get(i).first.equals(googleResults.get(g))) {
+					if (results.get(i).first.equals(googleResults.get(g).first)) {
 						/*
 						 * assign a relevance value. This values is between 0
 						 * (less relevant) to NDCG-1 (more relevant)
 						 */
 
 						relevance = NDCG_NUMBER - g;
+						break;
 					}
 				}
 				// store each par <URL, relevance value>
@@ -49,6 +50,7 @@ public class NDCG {
 				description[0]=googleResults.get(i).first;
 				description[1]=googleResults.get(i).second;
 				GoogleDCG.add(Pair.createPair(description, (double) NDCG_NUMBER-i));
+
 
 			}
 
@@ -79,7 +81,6 @@ public class NDCG {
 			
 			//final operation (division) to get NCDG
 			for (int i = 0; i < NDCG_NUMBER; i++) {
-				System.out.println(NDCGResult.get(i).second);
 				NDCGResult.set(
 						i,
 						Pair.createPair(

@@ -61,7 +61,7 @@ public class Crawler extends WebCrawler{
 			System.out.println("Parent DocID: "+page.getWebURL().getParentDocid());
 			
 			db.putWebpage(new WebURLExtension(page.getWebURL().getURL(), text, page.getWebURL().getDocid(), 
-					page.getWebURL().getParentDocid(), page.getWebURL().getParentUrl(), page.getWebURL().getDomain(), 
+					htmlParseData.getTitle(), page.getWebURL().getDomain(), 
 					page.getWebURL().getSubDomain(), page.getWebURL().getPath(), page.getWebURL().getAnchor()));
 			
 			//make index for links (useful for pagerank)
