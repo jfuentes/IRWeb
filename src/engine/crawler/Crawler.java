@@ -66,19 +66,28 @@ public class Crawler extends WebCrawler{
 			
 			//make index for links (useful for pagerank)
 			Link li=null;
+			int nonICS=0;
 			for(WebURL web: links){
+				if(web.getURL().matches("^http://.*\\.ics\\.uci\\.edu/.*")){
 				if((li=linksDB.getLink(web.getURL()))!=null){
 					li.addIngoingLink(url, web.getAnchor());
+					linksDB.putLink(li);
 				}else{
 					Link link= new Link(web.getURL());
+					
+					link.addIngoingLink(url, web.getAnchor());
 					linksDB.putLink(link);
 				}
+				
+				}else
+					nonICS++;
 			}
 			
 			li = linksDB.getLink(url);
-			if(li!=null)
-				li.setNumberOutgoingLinks(links.size());
-			
+			if(li!=null){
+				li.setNumberOutgoingLinks((links.size()-nonICS));
+				linksDB.putLink(li);
+			}
 			
 			linksDB.syncStore();
 			
