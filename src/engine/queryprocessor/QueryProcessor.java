@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
 
+import engine.persistence.BerkeleyDB;
 import engine.persistence.DocInvertedIndex;
 import engine.persistence.TermInvertedIndex;
 import engine.persistence.InvertedIndexDB;
@@ -144,13 +145,16 @@ public class QueryProcessor {
 		int i=0;
 		while(iterator.hasNext() && i<documents.size()){
 			String s = iterator.next();
-			Double[] statistics= new Double[6];
+			Double[] statistics= new Double[8];
 			statistics[0]=new Double(documents.get(s).first); // total number of matches
 			statistics[1]=documents.get(s).second; //tf_idf
 			statistics[2]=(double) lp.comboSpace.get(s)[0]; //a location with most words appear nearby
 			statistics[3]=(double) lp.comboSpace.get(s)[1]; //how many words appear together
 			statistics[4]=(double) lp.comboSpace.get(s)[2]; //how many times does words appear together
-			statistics[5]= statistics[0]*100 + statistics[1]; // determining score
+			double[] titleandanchor = checkTitleandAnchor(s);
+			statistics[6]= titleandanchor[0]; // total number of matches in Anchor and Title
+			statistics[7]= titleandanchor[1]; // tf of target words in Anchor and Title
+			statistics[5]= statistics[0]*100 + statistics[1]*10 + statistics[6]*statistics[7]*100 + statistics[3]*50 + statistics[4]; // determining score
 			Pair<String, Double[]> triple= Pair.createPair(s, statistics);
 			arrayList.add(triple);
 			i++;
@@ -164,6 +168,30 @@ public class QueryProcessor {
 		
 		return arrayList;
 		
+	}
+	
+	public double[] checkTitleandAnchor(String url) {
+		BerkeleyDB db=BerkeleyDB.getInstance();
+		String TA = db.getWebpage(url).getAnchor() + " " + db.getWebpage(url).getTitle();
+		List<String> tokens = Utilities.tokenizeString(TA);
+		double howmanywords = 0;
+		double howmanytimes = 0;
+		boolean wordexist = false;
+		for (String w : parseQuery()) {
+			wordexist = false;
+			for(String t : tokens) {
+				if(w.equals(t)) {
+					howmanytimes ++;
+					wordexist = true;
+				}
+			}
+			if(wordexist == true) {
+				howmanywords++;
+			}
+		}
+		double[] result = new double[2];
+		result = new double[]{howmanywords,howmanytimes};
+		return result;
 	}
 
 }

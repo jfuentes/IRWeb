@@ -72,6 +72,8 @@ public class DoSearch extends HttpServlet {
      			out.println("         tf-idf: " + df.format(results.get(i).second[1]) + "</br>");     			
      			out.println("         loc/maxcombo/combonum: " + results.get(i).second[2] + " " + results.get(i).second[3] + " " + results.get(i).second[4]+ "</br>");
      			out.println("         " + getText(results.get(i).first,results.get(i).second[2],Utilities.tokenizeString(tosearch)));
+     			out.println("         AT-match: " + df.format(results.get(i).second[6]) + "</br>");   
+     			out.println("         AT-freq: " + df.format(results.get(i).second[7]) + "</br>");   
      			out.println("</br> </br>");
      			//out.println("</div>");
      			}
@@ -234,6 +236,7 @@ public class DoSearch extends HttpServlet {
 		   result += tokens.get(i) + " ";
 	   }
 	   result += tokens.get(tokens.size()-1) + "... <br> ";
+	   result += "Anchor: " + db.getWebpage(url).getAnchor() + " <br> Title: " + db.getWebpage(url).getTitle() + " <br> ";
 	   return result;
    }
 }
