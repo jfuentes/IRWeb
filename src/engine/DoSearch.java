@@ -15,6 +15,7 @@ import engine.persistence.BerkeleyDB;
 import engine.persistence.InvertedIndexDB;
 import engine.queryprocessor.SearchEngineController;
 import engine.utils.Pair;
+import engine.utils.Utilities;
  
 @SuppressWarnings("serial")
 public class DoSearch extends HttpServlet {
@@ -66,9 +67,11 @@ public class DoSearch extends HttpServlet {
      			if(web!=null){
      			out.println("<a href='"+results.get(i).first+"'>"+web.getAnchor()+"</a></br>");
      			out.println("<font color='green'>"+results.get(i).first+"</font></br>");
-     			out.println("         score: " + df.format(results.get(i).second[2]) + " </br>");
+     			out.println("         score: " + df.format(results.get(i).second[5]) + " </br>");
      			out.println("         " +(results.get(i).second[0].intValue())+ " words matched </br> ");
-     			out.println("         tf-idf: " + df.format(results.get(i).second[1]));
+     			out.println("         tf-idf: " + df.format(results.get(i).second[1]) + "</br>");     			
+     			out.println("         loc/maxcombo/combonum: " + results.get(i).second[2] + " " + results.get(i).second[3] + " " + results.get(i).second[4]+ "</br>");
+     			out.println("         " + getText(results.get(i).first,results.get(i).second[2],Utilities.tokenizeString(tosearch)));
      			out.println("</br> </br>");
      			//out.println("</div>");
      			}
@@ -92,6 +95,7 @@ public class DoSearch extends HttpServlet {
       
 		} // end else
    }
+
  
    private void NCDGProcess(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 	   InvertedIndexDB.getInstance();
@@ -209,5 +213,27 @@ public class DoSearch extends HttpServlet {
          }
       }
       return (result.toString());
+   }
+   
+   private String getText(String url, double loc, List<String> tosearch) {
+	   int n = 10;
+	   BerkeleyDB db=BerkeleyDB.getInstance();
+	   String content = db.getWebpage(url).getTextContent();
+	   List<String> tokens = Utilities.tokenizeString(content);
+	   int location = (int) loc;
+	   int startpoint = Math.max(0, location-(n/2)+1);
+	   int endpoint = Math.min(tokens.size(), location+(n/2)+1);
+	   tokens = tokens.subList(startpoint, endpoint);
+	   for(int i=0; i<tokens.size(); i++) {
+		   if(tosearch.indexOf(tokens.get(i))!=-1) {
+			   tokens.set(i, "<b>" + tokens.get(i) + "</b>");
+		   }
+	   }
+	   String result = "...";
+	   for(int i=0; i<tokens.size()-1; i++) {
+		   result += tokens.get(i) + " ";
+	   }
+	   result += tokens.get(tokens.size()-1) + "... <br> ";
+	   return result;
    }
 }

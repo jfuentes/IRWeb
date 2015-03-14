@@ -22,6 +22,7 @@ public class QueryProcessor {
 	
 	//use List to store information about documents
 	HashMap<String, Pair<Integer, Double>> documents;
+	LocationProcessor lp;
 	//Pair.Integer count how many words in query can be found in this document
 	//Pair.Double count the total of tf-idf of this document
 
@@ -46,23 +47,24 @@ public class QueryProcessor {
 			//TermInvertedIndex term = index.getTerm(stemmer.toString());
 			TermInvertedIndex term = index.getTerm(w);
 			if(term!=null){
-			long df = term.getTotalDocs();
-			//turn information of word into information of document
-			for (DocInvertedIndex doc : term.getList()) {
-				String docName = doc.getDocument();
-				List<Integer> docLocations = doc.getLocations();
-				double tf_idf = (1+Math.log10(docLocations.size()))*(Math.log10(corpus/df));
-				//put information of document into List
-				putInfoHashMap(docName, tf_idf);
-			}
+				long df = term.getTotalDocs();
+				//turn information of word into information of document
+				for (DocInvertedIndex doc : term.getList()) {
+					String docName = doc.getDocument();
+					List<Integer> docLocations = doc.getLocations();
+					double tf_idf = (1+Math.log10(docLocations.size()))*(Math.log10(corpus/df));
+					//put information of document into List
+					putInfoHashMap(docName, tf_idf);
+				}
 			}
 		}
-		
+
 		sortAndPrint();
 	}
 	
 	public ArrayList<Pair<String, Double[]>>  doSearchAndReturn() {
 		long corpus = index.getTotalTerms();
+		lp = new LocationProcessor();
 		//draw information of word out of database
 		for (String w : parseQuery()) {
 			//Stemmer stemmer = new Stemmer();
@@ -79,10 +81,12 @@ public class QueryProcessor {
 				double tf_idf = (1+Math.log10(docLocations.size()))*(Math.log10(corpus/df));
 				//put information of document into List
 				putInfoHashMap(docName, tf_idf);
+				//
+				lp.putInfo(docName, w, docLocations);
 			}
 			}
 		}
-		
+		lp.processInfo();
 		return sortAndReturn();
 	}
 	
@@ -140,10 +144,13 @@ public class QueryProcessor {
 		int i=0;
 		while(iterator.hasNext() && i<documents.size()){
 			String s = iterator.next();
-			Double[] statistics= new Double[3];
+			Double[] statistics= new Double[6];
 			statistics[0]=new Double(documents.get(s).first); // total number of matches
 			statistics[1]=documents.get(s).second; //tf_idf
-			statistics[2]= statistics[0]*100 + statistics[1]; // determining score
+			statistics[2]=(double) lp.comboSpace.get(s)[0]; //a location with most words appear nearby
+			statistics[3]=(double) lp.comboSpace.get(s)[1]; //how many words appear together
+			statistics[4]=(double) lp.comboSpace.get(s)[2]; //how many times does words appear together
+			statistics[5]= statistics[0]*100 + statistics[1]; // determining score
 			Pair<String, Double[]> triple= Pair.createPair(s, statistics);
 			arrayList.add(triple);
 			i++;
@@ -151,7 +158,7 @@ public class QueryProcessor {
 	
 		Collections.sort(arrayList, new Comparator<Pair<String, Double[]>>(){
 			public int compare(Pair<String, Double[]> pair1, Pair<String, Double[]> pair2){
-				return pair2.second[2].compareTo(pair1.second[2]); //sort by score
+				return pair2.second[5].compareTo(pair1.second[5]); //sort by score
 			}
 		});
 		
