@@ -11,6 +11,8 @@ import java.util.Collections;
 
 import engine.persistence.BerkeleyDB;
 import engine.persistence.DocInvertedIndex;
+import engine.persistence.Link;
+import engine.persistence.LinksDB;
 import engine.persistence.TermInvertedIndex;
 import engine.persistence.InvertedIndexDB;
 import engine.utils.Pair;
@@ -88,7 +90,7 @@ public class QueryProcessor {
 			}
 		}
 		lp.processInfo();
-		return sortAndReturn();
+		return sortAndReturnPageRank();
 	}
 	
 	public void putInfoHashMap(String docName, double tf_idf) {
@@ -145,7 +147,34 @@ public class QueryProcessor {
 		int i=0;
 		while(iterator.hasNext() && i<documents.size()){
 			String s = iterator.next();
-			Double[] statistics= new Double[8];
+			Double[] statistics= new Double[3];
+			statistics[0]=new Double(documents.get(s).first); // total number of matches
+			statistics[1]=documents.get(s).second; //tf_idf
+			statistics[2]= statistics[0]*100 + statistics[1]; // determining score
+			Pair<String, Double[]> triple= Pair.createPair(s, statistics);
+			arrayList.add(triple);
+			i++;
+		}
+	
+		Collections.sort(arrayList, new Comparator<Pair<String, Double[]>>(){
+			public int compare(Pair<String, Double[]> pair1, Pair<String, Double[]> pair2){
+				return pair2.second[2].compareTo(pair1.second[2]); //sort by score
+			}
+		});
+		
+		return arrayList;
+		
+	}
+	
+	public ArrayList<Pair<String, Double[]>> sortAndReturnPageRank() {
+		//calculate score based on information in hashmap of documents
+		ArrayList<Pair<String, Double[]>> arrayList= new ArrayList<Pair<String, Double[]>>(documents.size());
+		Iterator<String> iterator= documents.keySet().iterator();
+		LinksDB links = LinksDB.getInstance();
+		int i=0;
+		while(iterator.hasNext() && i<documents.size()){
+			String s = iterator.next();
+			Double[] statistics= new Double[9];
 			statistics[0]=new Double(documents.get(s).first); // total number of matches
 			statistics[1]=documents.get(s).second; //tf_idf
 			statistics[2]=(double) lp.comboSpace.get(s)[0]; //a location with most words appear nearby
@@ -154,7 +183,17 @@ public class QueryProcessor {
 			double[] titleandanchor = checkTitleandAnchor(s);
 			statistics[6]= titleandanchor[0]; // total number of matches in Anchor and Title
 			statistics[7]= titleandanchor[1]; // tf of target words in Anchor and Title
-			statistics[5]= statistics[0]*100 + statistics[1]*10 + statistics[6]*statistics[7]*100 + statistics[3]*50 + statistics[4]; // determining score
+			//look up the pageRank
+			Link link = links.getLink(s);
+			statistics[8]=(double) 0;
+			if(link!=null){
+				statistics[8]=link.getCurrentPageRank(); // apply PageRank as a factor
+				//System.out.println(s+"  ->"+statistics[0]+"  "+statistics[1]+"  "+link.getCurrentPageRank());
+			}
+			
+			
+			
+			statistics[5]= statistics[0]*100 + statistics[1]*10 + statistics[6]*statistics[7]*100 + statistics[3]*50 + statistics[4] +statistics[8]*500; // determining score
 			Pair<String, Double[]> triple= Pair.createPair(s, statistics);
 			arrayList.add(triple);
 			i++;
@@ -171,27 +210,61 @@ public class QueryProcessor {
 	}
 	
 	public double[] checkTitleandAnchor(String url) {
-		BerkeleyDB db=BerkeleyDB.getInstance();
-		String TA = db.getWebpage(url).getAnchor() + " " + db.getWebpage(url).getTitle();
-		List<String> tokens = Utilities.tokenizeString(TA);
-		double howmanywords = 0;
-		double howmanytimes = 0;
-		boolean wordexist = false;
-		for (String w : parseQuery()) {
-			wordexist = false;
-			for(String t : tokens) {
-				if(w.equals(t)) {
-					howmanytimes ++;
-					wordexist = true;
+			BerkeleyDB db=BerkeleyDB.getInstance();
+			String TA = db.getWebpage(url).getAnchor() + " " + db.getWebpage(url).getTitle();
+			List<String> tokens = Utilities.tokenizeString(TA);
+			double howmanywords = 0;
+			double howmanytimes = 0;
+			boolean wordexist = false;
+			for (String w : parseQuery()) {
+				wordexist = false;
+				for(String t : tokens) {
+					if(w.equals(t)) {
+						howmanytimes ++;
+						wordexist = true;
+					}
+				}
+				if(wordexist == true) {
+					howmanywords++;
 				}
 			}
-			if(wordexist == true) {
-				howmanywords++;
+			double[] result = new double[2];
+			result = new double[]{howmanywords,howmanytimes};
+			return result;
+	}
+	
+	public int checkTitle(String url) {
+		BerkeleyDB db=BerkeleyDB.getInstance();
+		String TA = db.getWebpage(url).getTitle();
+		List<String> tokens = Utilities.tokenizeString(TA);
+		int howmanytimes = 0;
+		for (String w : parseQuery()) {
+
+			for(String t : tokens) {
+				if(w.equalsIgnoreCase(t)) {
+					howmanytimes ++;
+				}
+			}
+			
+		}
+
+		return howmanytimes;
+	}
+	
+	
+	public int checkAnchorText(String url) {
+		LinksDB links = LinksDB.getInstance();
+
+		int howmanytimes = 0;
+		Link link = links.getLink(url);
+		if(link!=null)
+		for (int i=0; i<link.getIngoingLinks().size(); i++) {
+			if(link.getAnchorText(i)!=null)
+			if(link.getAnchorText(i).equalsIgnoreCase(word)) {
+				howmanytimes++;
 			}
 		}
-		double[] result = new double[2];
-		result = new double[]{howmanywords,howmanytimes};
-		return result;
+		return howmanytimes;
 	}
 
 }

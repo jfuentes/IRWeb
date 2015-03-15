@@ -60,8 +60,9 @@ public class Utilities {
 		 * means non-word.
 		 */
 
+		
 		ArrayList<String> list = new ArrayList<String>();
-
+		if(text!=null)
 		for (String token : text.split("[\\W_]+")) { // W means non-word as a
 													// delimiter
 			if (token.length() > 1 && !isNumeric(token))
