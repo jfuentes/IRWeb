@@ -164,7 +164,7 @@ public class DoSearch extends HttpServlet {
 	     		for (int i=0; i<GoogleResults.size() && i<5;i++) {
 	     			out.print("<a href='"+GoogleResults.get(i).first[0]+"'>"+GoogleResults.get(i).first[1]+"</a></br>");
 	     			out.print("<font color='green'>"+GoogleResults.get(i).first[0]+"</font></br>");
-	     			out.print("         NDCG: " + df.format(GoogleResults.get(i).second) + " </br>");
+	     			//out.print("         NDCG: " + df.format(GoogleResults.get(i).second) + " </br>");
 	     			out.print("</br></br>");
 
 	     		}

@@ -39,8 +39,9 @@ public class GoogleSearch {
 		
 		ArrayList<Pair<String, String>> resultsList = new ArrayList<Pair<String, String>>();
 		
-		query+=" \"site:ics.uci.edu \"";
-		for (int i = 0; i < NUMBER_RESULTS; i = i + 4) {
+		query+=" \"site:ics.uci.edu\"";
+		int totalResults=0;
+		for (int i = 0; totalResults < NUMBER_RESULTS; i = i + 4) {
 			String address = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&start="+i+"&q=";
 		 
 			
@@ -52,7 +53,12 @@ public class GoogleSearch {
 		 
 			// Show title and URL of each results
 			for (int m = 0; m <= 3; m++) {
-				resultsList.add(Pair.createPair(results.getResponseData().getResults().get(m).getUrl(), results.getResponseData().getResults().get(m).getTitle()));
+				if(!results.getResponseData().getResults().get(m).getUrl().endsWith(".pdf") && !results.getResponseData().getResults().get(m).getUrl().endsWith(".ppt")){
+					resultsList.add(Pair.createPair(results.getResponseData().getResults().get(m).getUrl(), results.getResponseData().getResults().get(m).getTitle()));
+					totalResults++;
+				}
+					
+				
 				//System.out.println("Title: " + results.getResponseData().getResults().get(m).getTitle());
 				//System.out.println("URL: " + results.getResponseData().getResults().get(m).getUrl() + "\n");
 			}

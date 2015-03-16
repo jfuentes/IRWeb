@@ -181,8 +181,8 @@ public class QueryProcessor {
 			statistics[3]=(double) lp.comboSpace.get(s)[1]; //how many words appear together
 			statistics[4]=(double) lp.comboSpace.get(s)[2]; //how many times does words appear together
 			double[] titleandanchor = checkTitleandAnchor(s);
-			statistics[6]= titleandanchor[0]; // total number of matches in Anchor and Title
-			statistics[7]= titleandanchor[1]; // tf of target words in Anchor and Title
+			statistics[6]= (double) checkTitle(s); // total number of matches in Anchor and Title
+			statistics[7]= (double) checkAnchorText(s); // tf of target words in Anchor and Title
 			//look up the pageRank
 			Link link = links.getLink(s);
 			statistics[8]=(double) 0;
@@ -193,7 +193,7 @@ public class QueryProcessor {
 			
 			
 			
-			statistics[5]= statistics[0]*100 + statistics[1]*10 + statistics[6]*statistics[7]*100 + statistics[3]*50 + statistics[4] +statistics[8]*500; // determining score
+			statistics[5]= statistics[0]*100 + statistics[1]*10 + statistics[6]*500 + statistics[7]*400 + statistics[3]*50 + statistics[4] +statistics[8]*50; // determining score
 			Pair<String, Double[]> triple= Pair.createPair(s, statistics);
 			arrayList.add(triple);
 			i++;
