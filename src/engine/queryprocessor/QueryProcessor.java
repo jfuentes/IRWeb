@@ -193,7 +193,7 @@ public class QueryProcessor {
 			
 			
 			
-			statistics[5]= statistics[0]*100 + statistics[1]*10 + statistics[6]*500 + statistics[7]*400 + statistics[3]*50 + statistics[4] +statistics[8]*50; // determining score
+			statistics[5]= statistics[0]*10 + statistics[1]*50 + statistics[6]*500 + statistics[7]*400 + statistics[3]*80 + statistics[4] +Math.log(statistics[8])*200; // determining score
 			Pair<String, Double[]> triple= Pair.createPair(s, statistics);
 			arrayList.add(triple);
 			i++;

@@ -13,6 +13,7 @@ import engine.NDCG.NDCG;
 import engine.crawler.WebURLExtension;
 import engine.persistence.BerkeleyDB;
 import engine.persistence.InvertedIndexDB;
+import engine.persistence.LinksDB;
 import engine.queryprocessor.SearchEngineController;
 import engine.utils.Pair;
 import engine.utils.Utilities;
@@ -20,7 +21,9 @@ import engine.utils.Utilities;
 @SuppressWarnings("serial")
 public class DoSearch extends HttpServlet {
  
-
+	BerkeleyDB instance1 = BerkeleyDB.getInstance();
+	InvertedIndexDB instace2 = InvertedIndexDB.getInstance();
+	LinksDB instance3 = LinksDB.getInstance();
 
 @Override
    public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -68,7 +71,7 @@ public class DoSearch extends HttpServlet {
      			out.println("<a href='"+results.get(i).first+"'>"+web.getAnchor()+"</a></br>");
      			out.println("<font color='green'>"+results.get(i).first+"</font></br>");
      			out.println("         score: " + df.format(results.get(i).second[5]) + " </br>");
-     			out.println("         " +(results.get(i).second[0].intValue())+ " words matched </br> ");
+     			//out.println("         " +(results.get(i).second[0].intValue())+ " words matched </br> ");
      			out.println("         tf-idf: " + df.format(results.get(i).second[1]) + "</br>");     			
      			out.println("         loc/maxcombo/combonum: " + results.get(i).second[2] + " " + results.get(i).second[3] + " " + results.get(i).second[4]+ "</br>");
      			out.println("         " + getText(results.get(i).first,results.get(i).second[2],Utilities.tokenizeString(tosearch)));
@@ -218,7 +221,7 @@ public class DoSearch extends HttpServlet {
    }
    
    private String getText(String url, double loc, List<String> tosearch) {
-	   int n = 10;
+	   int n = 20;
 	   BerkeleyDB db=BerkeleyDB.getInstance();
 	   String content = db.getWebpage(url).getTextContent();
 	   List<String> tokens = Utilities.tokenizeString(content);
@@ -227,16 +230,17 @@ public class DoSearch extends HttpServlet {
 	   int endpoint = Math.min(tokens.size(), location+(n/2)+1);
 	   tokens = tokens.subList(startpoint, endpoint);
 	   for(int i=0; i<tokens.size(); i++) {
-		   if(tosearch.indexOf(tokens.get(i))!=-1) {
-			   tokens.set(i, "<b>" + tokens.get(i) + "</b>");
+		   for(String s : tosearch){
+			   if(s.equalsIgnoreCase(tokens.get(i)))
+				   tokens.set(i, "<b>" + tokens.get(i) + "</b>");
 		   }
 	   }
 	   String result = "...";
-	   for(int i=0; i<tokens.size()-1; i++) {
+	   for(int i=0; i<tokens.size(); i++) {
 		   result += tokens.get(i) + " ";
 	   }
-	   result += tokens.get(tokens.size()-1) + "... <br> ";
-	   result += "Anchor: " + db.getWebpage(url).getAnchor() + " <br> Title: " + db.getWebpage(url).getTitle() + " <br> ";
+	   result +="... <br> ";
+	  // result += "Anchor: " + db.getWebpage(url).getAnchor() + " <br> Title: " + db.getWebpage(url).getTitle() + " <br> ";
 	   return result;
    }
 }
