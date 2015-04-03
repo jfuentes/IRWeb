@@ -12,6 +12,7 @@ import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 
 import engine.crawler.WebURLExtension;
+import engine.utils.Utilities;
 
 
 public class BerkeleyDB {
@@ -23,8 +24,8 @@ public class BerkeleyDB {
 	private static EntityStore store;
 
 	private static PrimaryIndex<String, WebURLExtension> websiteIndex;
-
-	private static String dbRoot = "/home/joel/workspace/J2EEProjects/IRWeb/data/berkeleydata";
+	
+	private static String dbRoot = Utilities.DIRECTORY+"/data/berkeleydata";
 	private static File dbDir;
 	
 	private BerkeleyDB(){

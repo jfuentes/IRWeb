@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Set;
 
 public class Utilities {
-
+	public static final String DIRECTORY = System.getProperty("user.dir");
+	
 	public static List<String> tokenizeFile(File textFile) {
+		
 
 		/*
 		 * Count, separate words. We can use more advanced character patterns in

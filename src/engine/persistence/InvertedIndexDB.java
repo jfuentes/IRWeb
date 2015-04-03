@@ -3,7 +3,6 @@ package engine.persistence;
 import java.io.File;
 import java.io.PrintStream;
 
-
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
@@ -12,6 +11,8 @@ import com.sleepycat.persist.EntityCursor;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
+
+import engine.utils.Utilities;
 
 public class InvertedIndexDB {
 		//instence
@@ -23,7 +24,7 @@ public class InvertedIndexDB {
 
 		private static PrimaryIndex<String, TermInvertedIndex> invertedIndex;
 
-		private static String dbRoot = "/home/joel/workspace/J2EEProjects/IRWeb/data/index";
+		private static String dbRoot = Utilities.DIRECTORY+"data/index";
 		private static File dbDir;
 		
 		private InvertedIndexDB(){

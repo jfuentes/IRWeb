@@ -12,6 +12,8 @@ import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
 
+import engine.utils.Utilities;
+
 public class LinksDB {
 		//instence
 		private static LinksDB instance;
@@ -22,7 +24,7 @@ public class LinksDB {
 
 		private static PrimaryIndex<String, Link> linksIndex;
 
-		private static String dbRoot = "/home/joel/workspace/J2EEProjects/IRWeb/data/links";
+		private static String dbRoot = Utilities.DIRECTORY+"/data/links";
 		private static File dbDir;
 		
 		private LinksDB(){
